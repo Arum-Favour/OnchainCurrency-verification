@@ -1,23 +1,57 @@
 {
-  "name": "currency",
+  "name": "currency-verification-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "dev:legacy-backend": "nodemon backend/server.js",
+    "backend": "nodemon backend/server.js",
+    "backend:dev": "nodemon backend/server.js --watch backend",
+    "lint": "eslint",
+    "compile": "hardhat compile",
+    "deploy": "hardhat run scripts/deploy.js --network localhost",
+    "test": "hardhat test"
   },
   "dependencies": {
+    "axios": "^1.6.2",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.3.1",
+    "ethers": "^5.7.2",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "html5-qrcode": "^2.3.8",
+    "joi": "^17.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "jsqr": "^1.4.0",
+    "mongoose": "^8.0.3",
+    "multer": "^1.4.5-lts.1",
+    "next": "15.5.5",
+    "nodemon": "^3.1.10",
+    "qrcode": "^1.5.3",
+    "qrcode-reader": "^1.0.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.5.5"
+    "sharp": "^0.33.0",
+    "uuid": "^9.0.1",
+    "web3": "^4.3.0",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@openzeppelin/contracts": "^4.9.3",
     "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
+    "chai": "^4.3.7",
+    "concurrently": "^9.2.1",
     "eslint": "^9",
     "eslint-config-next": "15.5.5",
-    "@eslint/eslintrc": "^3"
+    "hardhat": "^2.19.0",
+    "mocha": "^10.2.0",
+    "tailwindcss": "^4"
   }
 }
