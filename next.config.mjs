@@ -10,7 +10,9 @@ const nextConfig = {
   ],
   // Fix workspace root detection - explicitly set to current directory
   outputFileTracingRoot: process.cwd(),
-  serverExternalPackages: ['mongoose', 'sharp'],
+  env: {
+    NEXT_PUBLIC_BACKEND_URL: process.env.BACKEND_URL || 'http://localhost:3001',
+  },
   // Additional configuration for development
   experimental: {
     // Enable if you're using any experimental features

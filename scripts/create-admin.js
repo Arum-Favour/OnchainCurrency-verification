@@ -27,20 +27,16 @@ async function createAdmin() {
     console.log('Connected to MongoDB');
 
     // Check if admin already exists
-    const existingAdmin = await User.findOne({ email: 'admin@example.com' });
+    const existingAdmin = await User.findOne({ email: process.env.ADMIN_EMAIL || 'admin@currencyverification.com' });
     if (existingAdmin) {
       console.log('Admin account already exists!');
-      console.log('Email: admin@example.com');
-      console.log('Password: admin123');
+      console.log(`Email: ${existingAdmin.email}`);
       return;
     }
 
-    // Create admin account
-    const hashedPassword = await bcrypt.hash('admin123', 12);
-    
     const admin = new User({
-      email: 'admin@example.com',
-      password: hashedPassword,
+      email: process.env.ADMIN_EMAIL || 'admin@currencyverification.com',
+      password: process.env.ADMIN_PASSWORD || 'admin123',
       role: 'admin',
       profile: {
         firstName: 'Admin',
@@ -53,8 +49,8 @@ async function createAdmin() {
 
     await admin.save();
     console.log('✅ Admin account created successfully!');
-    console.log('Email: admin@example.com');
-    console.log('Password: admin123');
+    console.log(`Email: ${admin.email}`);
+    console.log(`Password: ${process.env.ADMIN_PASSWORD || 'admin123'}`);
     console.log('Role: admin');
 
   } catch (error) {
@@ -83,7 +79,7 @@ async function createCustomAdmin(email, password, firstName, lastName) {
     
     const admin = new User({
       email,
-      password: hashedPassword,
+      password,
       role: 'admin',
       profile: {
         firstName,

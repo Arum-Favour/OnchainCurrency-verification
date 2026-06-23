@@ -8,7 +8,7 @@ const {
 } = require('../constants/nairaNotes');
 const { buildVerificationUrl } = require('./verificationUrl');
 
-const PUBLIC_DIR = path.join(process.cwd(), 'public');
+const PUBLIC_DIR = path.join(__dirname, '../../public');
 
 const escapeXml = (str) =>
   String(str)
