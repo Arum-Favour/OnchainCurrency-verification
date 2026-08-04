@@ -2,17 +2,38 @@ const { ethers } = require('ethers');
 
 let provider, contract, wallet;
 
+const normalizePrivateKey = (key) => {
+  if (!key) return null;
+  const trimmed = String(key).trim();
+  return trimmed.startsWith('0x') ? trimmed : `0x${trimmed}`;
+};
+
+const resolveRpcUrl = () => {
+  const sepoliaUrl = process.env.SEPOLIA_URL?.trim();
+  if (sepoliaUrl) return sepoliaUrl;
+  return 'http://127.0.0.1:8545';
+};
+
+const isLocalRpc = (url) =>
+  url.includes('127.0.0.1') || url.includes('localhost');
+
 // Initialize blockchain connection
 const initializeBlockchain = async () => {
   try {
-    if (process.env.SEPOLIA_URL && process.env.PRIVATE_KEY) {
-      provider = new ethers.providers.JsonRpcProvider(process.env.SEPOLIA_URL);
-      wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
-    } else {
-      // Use local hardhat network
-      provider = new ethers.providers.JsonRpcProvider('http://localhost:8545');
-      wallet = new ethers.Wallet(process.env.PRIVATE_KEY || '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80', provider);
+    const rpcUrl = resolveRpcUrl();
+    const privateKey = normalizePrivateKey(process.env.PRIVATE_KEY);
+
+    if (!privateKey) {
+      console.log('Blockchain: PRIVATE_KEY not set — blockchain signing disabled');
+      return;
     }
+
+    const network = isLocalRpc(rpcUrl)
+      ? { name: 'localhost', chainId: 1337 }
+      : { name: 'sepolia', chainId: 11155111 };
+
+    provider = new ethers.providers.JsonRpcProvider(rpcUrl, network);
+    wallet = new ethers.Wallet(privateKey, provider);
 
     if (process.env.CONTRACT_ADDRESS) {
       const contractABI = [
@@ -28,7 +49,8 @@ const initializeBlockchain = async () => {
       contract = new ethers.Contract(process.env.CONTRACT_ADDRESS, contractABI, wallet);
     }
   } catch (error) {
-    console.error('Blockchain initialization error:', error);
+    console.error('Blockchain initialization error:', error.message);
+    console.error(`   RPC URL: ${resolveRpcUrl()}`);
   }
 };
 
@@ -267,7 +289,14 @@ const getBlockchainStatus = async () => {
       contractAddress: process.env.CONTRACT_ADDRESS || null
     };
   } catch (error) {
-    console.error('Blockchain status error:', error);
+    const rpcUrl = resolveRpcUrl();
+    console.error('Blockchain status error:', error.message);
+    console.error(`   RPC URL: ${rpcUrl}`);
+    if (isLocalRpc(rpcUrl)) {
+      console.error('   Tip: Start a local node with `npx hardhat node`');
+    } else {
+      console.error('   Tip: Check SEPOLIA_URL in backend/.env and your internet/API key');
+    }
     throw error;
   }
 };
