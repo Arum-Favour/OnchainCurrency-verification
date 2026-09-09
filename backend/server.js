@@ -20,6 +20,9 @@ const { getBlockchainStatus } = require('./utils/blockchain');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Trust Render/load balancer so express-rate-limit can use X-Forwarded-For
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet());
 app.use(cors({
